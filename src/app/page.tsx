@@ -1,3 +1,4 @@
+"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -9,17 +10,36 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { TextPanel } from "./_components/TextPanel/TextPanel";
+import TextPanel from "./_components/TextPanel/TextPanel";
+import { useState } from "react";
 
 const GENRES = [
   "Military Operation Report",
-  "Bible",
+  "Bible or Prophecy",
   "1980s Rockstar Interview",
   "Psychiatric Case File",
   "Authoritarian Government Internal Document",
 ];
 
 export default function Home() {
+  const [originalText, setOriginalText] = useState<string>("");
+  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [resultText, setResultText] = useState<string>("");
+  const [submittedText, setSubmittedText] = useState<string>("");
+
+  const convertText = async () => {
+    setSubmittedText(submittedText);
+    const response = await fetch("/api/rewrite", {
+      method: "POST",
+      body: JSON.stringify({
+        text: submittedText,
+        genre: selectedGenre,
+      }),
+    });
+    const data = await response.json();
+    setResultText(data.result);
+  };
+
   return (
     <main className="bg-purple-200/50 h-screen w-screen flex items-center justify-center py-10">
       <Card className="max-w-5/6 h-full w-full overflow-hidden p-0 gap-0 shadow-2xl flex flex-col">
@@ -39,14 +59,16 @@ export default function Home() {
               <label className="block font-medium">Original Text</label>
               <Textarea
                 className="border-2 rounded-sm h-30 resize-none bg-white focus-visible:ring-0"
-                placeholder="Enter text to convert..."
+                value={originalText}
+                onChange={(e) => setOriginalText(e.target.value)}
+                placeholder="Enter text to convert"
               />
             </div>
 
             <div className="space-y-3">
               <label className="block font-medium">Select a genre</label>
               <div className="flex gap-4">
-                <Select>
+                <Select onValueChange={(genre) => setSelectedGenre(genre)}>
                   <SelectTrigger className="w-full bg-white">
                     <SelectValue placeholder="Select a genre" />
                   </SelectTrigger>
@@ -60,7 +82,11 @@ export default function Home() {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <Button className="w-25 bg-linear-to-r from-purple-600 to-blue-600 hover:opacity-90 transition-opacity">
+                <Button
+                  className="w-25 bg-linear-to-r from-purple-600 to-blue-600 hover:opacity-90 transition-opacity"
+                  disabled={!originalText || !selectedGenre}
+                  onClick={convertText}
+                >
                   Convert
                 </Button>
               </div>
@@ -71,13 +97,17 @@ export default function Home() {
               title="Original"
               badgeText="Editable"
               badgeClassName="bg-blue-800"
-              placeholder="This is an original text..."
+              value={submittedText}
+              placeholder="This is an original text"
+              convertText={convertText}
+              setSubmittedText={setSubmittedText}
             />
             <TextPanel
               title="Result"
               badgeText="Locked"
               className="bg-purple-100/50"
               placeholder="Converted text will appear here..."
+              value={resultText}
               isReadOnly
             />
           </div>
