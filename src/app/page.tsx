@@ -1,65 +1,88 @@
-import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { TextPanel } from "./_components/TextPanel/TextPanel";
+
+const GENRES = [
+  "Military Operation Report",
+  "Bible",
+  "1980s Rockstar Interview",
+  "Psychiatric Case File",
+  "Authoritarian Government Internal Document",
+];
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="bg-purple-200/50 h-screen w-screen flex items-center justify-center py-10">
+      <Card className="max-w-5/6 h-full w-full overflow-hidden p-0 gap-0 shadow-2xl flex flex-col">
+        <CardHeader className="h-30 bg-linear-to-r from-purple-600/80 to-blue-600/80 flex flex-col justify-center px-10 shrink-0">
+          <CardTitle className="text-white text-4xl">
+            Genre Misunderstanding Lab
+          </CardTitle>
+          <p className="text-gray-100 font-semibold">
+            Same text, but in different Genre
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+        </CardHeader>
+
+        <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+          {/* Input Section */}
+          <section className="flex flex-col h-2/5 bg-gray-100/40 px-10 gap-8 justify-center shrink-0">
+            <div className="space-y-3">
+              <label className="block font-medium">Original Text</label>
+              <Textarea
+                className="border-2 rounded-sm h-30 resize-none bg-white focus-visible:ring-0"
+                placeholder="Enter text to convert..."
+              />
+            </div>
+
+            <div className="space-y-3">
+              <label className="block font-medium">Select a genre</label>
+              <div className="flex gap-4">
+                <Select>
+                  <SelectTrigger className="w-full bg-white">
+                    <SelectValue placeholder="Select a genre" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {GENRES.map((genre) => (
+                        <SelectItem key={genre} value={genre}>
+                          {genre}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Button className="w-25 bg-linear-to-r from-purple-600 to-blue-600 hover:opacity-90 transition-opacity">
+                  Convert
+                </Button>
+              </div>
+            </div>
+          </section>
+          <div className="flex flex-1 overflow-hidden">
+            <TextPanel
+              title="Original"
+              badgeText="Editable"
+              badgeClassName="bg-blue-800"
+              placeholder="This is an original text..."
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <TextPanel
+              title="Result"
+              badgeText="Locked"
+              className="bg-purple-100/50"
+              placeholder="Converted text will appear here..."
+              isReadOnly
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </main>
   );
 }
