@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
+// TODO: 로딩 추가
+
 const TextPanel = ({
   title,
   badgeText,
@@ -11,9 +13,6 @@ const TextPanel = ({
   badgeClassName,
   placeholder,
   className,
-  isReadOnly = false,
-  convertText,
-  setSubmittedText,
 }: TextPanelProps) => {
   return (
     <section
@@ -21,26 +20,16 @@ const TextPanel = ({
     >
       <header className="flex justify-between items-center pb-3 px-2 shrink-0">
         <h2 className="text-xl font-semibold">{title}</h2>
-        {isReadOnly ? (
-          <Badge className={cn("h-5 bg-blue-900", badgeClassName)}>
-            {badgeText}
-          </Badge>
-        ) : (
-          <Button
-            disabled={value.length === 0}
-            className="h-7 bg-linear-to-r from-purple-600 to-blue-600 hover:opacity-90 transition-opacity"
-            onClick={convertText}
-          >
-            Convert
-          </Button>
-        )}
+        <Badge className={cn("h-5 bg-blue-900", badgeClassName)}>
+          {badgeText}
+        </Badge>
       </header>
       <hr className="pb-4 shrink-0" />
+      {/* Todo: Textarea 말고 Markdown 보여줄 수 있게 바꾸기 */}
       <Textarea
-        readOnly={isReadOnly}
+        readOnly={true}
         className="resize-none flex-1 bg-white focus-visible:ring-0 text-lg placeholder:text-gray-400"
         placeholder={placeholder}
-        onChange={(e) => setSubmittedText?.(e.target.value)}
         value={value}
       />
     </section>
