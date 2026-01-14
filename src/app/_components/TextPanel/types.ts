@@ -1,8 +1,7 @@
 export type TextPanelProps = {
   title: string;
-  badgeText: string;
   value: string;
-  badgeClassName?: string;
+  isResult: boolean;
   placeholder?: string;
   className?: string;
 };

@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import TextPanel from "./_components/TextPanel/TextPanel";
 import { useState } from "react";
+import Loading from "./_components/Loading/Loading";
+import clsx from "clsx";
 
 const GENRES = [
   "Military Operation Report",
@@ -21,23 +23,39 @@ const GENRES = [
   "Authoritarian Government Internal Document",
 ];
 
+const LOADING_TEXT: Record<string, string> = {
+  "Military Operation Report": "Operational interpretation in progress…",
+  "Bible or Prophecy": "The voice speaks, but meaning resists certainty…",
+  "1980s Rockstar Interview": "The artist lights another cigarette…",
+  "Psychiatric Case File": "Subject denies distress; symptoms persist…",
+  "Authoritarian Government Internal Document": "Compliance analysis underway…",
+};
+
 export default function Home() {
   const [originalText, setOriginalText] = useState<string>("");
   const [selectedGenre, setSelectedGenre] = useState<string>("");
   const [resultText, setResultText] = useState<string>("");
   const [submittedText, setSubmittedText] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const convertText = async () => {
-    setSubmittedText(submittedText);
-    const response = await fetch("/api/rewrite", {
-      method: "POST",
-      body: JSON.stringify({
-        text: submittedText,
-        genre: selectedGenre,
-      }),
-    });
-    const data = await response.json();
-    setResultText(data.result);
+    setIsLoading(true);
+    setSubmittedText(originalText);
+    try {
+      const response = await fetch("/api/rewrite", {
+        method: "POST",
+        body: JSON.stringify({
+          text: originalText,
+          genre: selectedGenre,
+        }),
+      });
+      const data = await response.json();
+      setResultText(data.result);
+    } catch (error) {
+      console.error("Conversion failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -83,11 +101,14 @@ export default function Home() {
                   </SelectContent>
                 </Select>
                 <Button
-                  className="w-25 bg-linear-to-r from-purple-600 to-blue-600 hover:opacity-90 transition-opacity"
+                  className={clsx(
+                    "w-25 bg-linear-to-r from-purple-600 to-blue-600 ",
+                    "hover:opacity-80 transition-opacity"
+                  )}
                   disabled={!originalText || !selectedGenre}
                   onClick={convertText}
                 >
-                  Convert
+                  <p className="font-semibold">Convert</p>
                 </Button>
               </div>
             </div>
@@ -95,21 +116,22 @@ export default function Home() {
           <div className="flex flex-1 overflow-hidden">
             <TextPanel
               title="Original"
-              badgeText="Editable"
-              badgeClassName="bg-blue-800"
               value={submittedText}
               placeholder="This is an original text"
-              convertText={convertText}
-              setSubmittedText={setSubmittedText}
+              isResult={false}
             />
-            <TextPanel
-              title="Result"
-              badgeText="Locked"
-              className="bg-purple-100/50"
-              placeholder="Converted text will appear here..."
-              value={resultText}
-              isReadOnly
-            />
+            <div className="flex flex-1 relative">
+              <TextPanel
+                title="Result"
+                className="bg-purple-100/50"
+                placeholder="Converted text will appear here..."
+                value={resultText}
+                isResult={true}
+              />
+              {isLoading && (
+                <Loading loadingText={LOADING_TEXT[selectedGenre]} />
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

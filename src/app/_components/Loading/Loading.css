@@ -22,12 +22,12 @@
 }
 
 .matrix-text {
-  color: #0f0;
-  font-size: 30px;
+  color: rgb(192, 132, 252); /* light purple */
+  font-size: 24px;
   font-family: monospace;
   position: relative;
-  text-shadow: 0 0 10px #000, 0 0 20px #0f0, 0 0 30px #0f0;
-  z-index: 2; /* Ensure it stays above the rain effect */
+  text-shadow: 0 0 10px rgba(147, 51, 234, 0.8), 0 0 20px rgba(37, 99, 235, 0.5);
+  z-index: 2;
 }
 
 .matrix-text::before {
@@ -40,8 +40,8 @@
   animation: glitch 2s infinite;
   clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
   transform: translate(-2px, -2px);
-  color: #0f0;
-  text-shadow: 0 0 5px #0f0, 0 0 15px #0f0;
+  color: rgb(147, 51, 234); /* purple-600 */
+  text-shadow: 0 0 5px rgba(37, 99, 235, 0.8);
 }
 
 .rain {
@@ -52,12 +52,12 @@
   height: 100%;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 255, 0, 0.1) 0,
-    rgba(0, 255, 0, 0.2) 2px,
+    rgba(147, 51, 234, 0.1) 0,
+    rgba(37, 99, 235, 0.15) 2px,
     transparent 4px
   );
   animation: rain 10s linear infinite;
-  z-index: 1; /* Place it behind the text */
+  z-index: 1;
 }
 
 /* Animation for the rain effect */
