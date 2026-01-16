@@ -62,3 +62,21 @@ ${text}
 """
 `;
 };
+
+export const ERROR_MESSAGE: Record<string, string> = {
+  "Military Operation Report":
+    "⚠️ Transmission interrupted. Report could not be finalized under current operational constraints.",
+  "Bible or Prophecy":
+    "⚠️ Evaluation halted. Content requires further review by the appropriate authority.",
+  "1980s Rockstar Interview":
+    'The artist exhales smoke and refuses to answer. "Some things don’t survive the amp."',
+  "Psychiatric Case File": "The words were spoken, but not revealed.",
+  "Authoritarian Government Internal Document":
+    "Session interrupted. Narrative continuity could not be established.",
+};
+
+export const MODELS: Record<string, string> = {
+  "gemma-3-27b": "google/gemma-3-27b-it:free",
+  "gpt-oss-120b": "openai/gpt-oss-120b:free",
+  "xiaomi-mimo": "xiaomi/mimo-v2-flash:free",
+};
