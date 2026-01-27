@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -27,7 +28,9 @@ import TextPanel from "./_components/TextPanel/TextPanel";
 import { useState } from "react";
 import Loading from "./_components/Loading/Loading";
 import clsx from "clsx";
-import { History, FlaskConical } from "lucide-react";
+import { History, FlaskConical, Clock, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const GENRES: Array<string> = [
   "Military Operation Report",
@@ -88,7 +91,7 @@ export default function Home() {
     return sessionId;
   }
 
-  console.log(history[0]["id"]);
+  // console.log(history[0]["id"]);
 
   const getHistory = async () => {
     const sessionId = getSessionId();
@@ -97,6 +100,7 @@ export default function Home() {
       const response = await fetch(url);
       const data = await response.json();
       setHistory(data);
+      console.log("History data:", data);
     } catch (error) {
       console.error("History fetch failed:", error);
     }
@@ -131,18 +135,65 @@ export default function Home() {
                 <span className="font-medium">History</span>
               </Button>
             </DrawerTrigger>
-            <DrawerContent className="bg-purple-50">
-              <div className="h-full">
-                <DrawerHeader>
-                  <DrawerTitle className="text-3xl">History</DrawerTitle>
-                </DrawerHeader>
-                <DrawerDescription className="ml-4">
+            <DrawerContent className="">
+              <DrawerHeader>
+                <div className="flex gap-1">
+                  <History className="w-5 text-blue-800" />
+                  <DrawerTitle className="">History</DrawerTitle>
+                  <DrawerClose className="flex  w-full justify-end">
+                    <X className="cursor-pointer w-5" />
+                  </DrawerClose>
+                </div>
+                <DrawerDescription className="text-xs">
                   Your recent Genre Misunderstandings
                 </DrawerDescription>
-                <div className="p-4 pb-0">
-                  <p>{history[0]["id"]}</p>
-                </div>
-              </div>
+              </DrawerHeader>
+              {history.map((item, index) => {
+                const getRelativeTime = (dateString: string) => {
+                  const now = new Date();
+                  const past = new Date(dateString);
+                  const diffInMs = now.getTime() - past.getTime();
+
+                  const diffInSeconds = Math.floor(diffInMs / 1000);
+                  const diffInMinutes = Math.floor(diffInSeconds / 60);
+                  const diffInHours = Math.floor(diffInMinutes / 60);
+                  const diffInDays = Math.floor(diffInHours / 24);
+
+                  if (diffInSeconds < 60) return "방금 전";
+                  if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+                  if (diffInHours < 24) return `${diffInHours}시간 전`;
+                  if (diffInDays < 7) return `${diffInDays}일 전`;
+
+                  // 7일 이상이면 날짜 표시 (예: 1월 29일)
+                  return past.toLocaleDateString("ko-KR", {
+                    month: "long",
+                    day: "numeric",
+                  });
+                };
+                return (
+                  <div
+                    key={`history-${index}`}
+                    className="flexs flex-col p-3 gap-1.5 border ml-3 mr-3 mb-3 rounded-sm"
+                  >
+                    <div className="flex items-center gap-2 justify-end">
+                      <Clock className="w-3 h-3 text-gray-500" />
+                      <p className="text-gray-500 text-sm">
+                        {getRelativeTime(item.created_at)}
+                      </p>
+                    </div>
+                    <span className="rounded bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+                      {item.genre}
+                    </span>
+                    <span className="ml-1 rounded bg-blue-400/20 px-2 py-0.5 text-xs font-medium text-primary">
+                      {item.model}
+                    </span>
+                    <p className="font-semibold text-gray-800">
+                      {item.original}
+                    </p>
+                    <p className="text-sm text-gray-500">{item.result}</p>
+                  </div>
+                );
+              })}
             </DrawerContent>
           </Drawer>
         </CardHeader>

@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Genre Misunderstanding Lab
 
-## Getting Started
+A creative web application that transforms text into different genres using LLM models. Enter any text and watch it be reinterpreted through various stylistic lenses - from military operation reports to biblical prophecies.
 
-First, run the development server:
+## 🧪 Features
+
+- **Text Transformation**: Convert any text into 5 distinct genres:
+
+  - Military Operation Report
+  - Bible or Prophecy
+  - 1980s Rockstar Interview
+  - Psychiatric Case File
+  - Authoritarian Government Internal Document
+
+- **Session History**: Track your previous transformations with persistent session storage
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm (recommended) or npm/yarn
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd genre-misunderstand
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Set up environment variables:
 
-## Learn More
+```bash
+cp .env.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+Add your API keys for the language model services.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Run the development server:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🏗️ Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework**: Next.js 16 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui (Radix UI)
+- **Database**: Supabase (for history storage)
+- **Icons**: Lucide React
+
+## 📁 Project Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── rewrite/     # Text transformation endpoint
+│   │   └── history/     # Session history endpoint
+│   ├── _components/     # React components
+│   │   ├── TextPanel/   # Input/output text areas
+│   │   └── Loading/     # Loading states
+│   ├── hooks.tsx        # Custom React hooks
+│   └── layout.tsx       # Root layout
+├── components/ui/       # shadcn/ui components
+└── lib/
+    └── utils.ts         # Utility functions
+```
+
+## 🎭 Genre Transformations
+
+Each genre applies specific transformation rules:
+
+- **Military Operation Report**: Formal military language with operation codes and threat assessments
+- **Bible or Prophecy**: Archaic, solemn language interpreting events as cosmic signs
+- **1980s Rockstar Interview**: Evasive, metaphor-heavy responses in interview format
+- **Psychiatric Case File**: Clinical tone describing emotions as symptoms
+- **Authoritarian Government Document**: Bureaucratic language with compliance framing
+
+## 🎨 Customization
+
+### Adding New Genres
+
+1. Add the genre to the `GENRES` array in `src/app/page.tsx`
+2. Define transformation rules in `src/app/api/rewrite/constants.ts`
+3. Add loading text and error messages to the respective objects
+
+### Adding New Models
+
+1. Add the model to the `MODELS` array in `src/app/page.tsx`
+2. Map the openrouter model in `MODELS` object in `src/app/api/rewrite/constants.ts`
+
+## 📝 Development
+
+### Code Style
+
+This project uses ESLint with Next.js configuration for consistent code formatting.
+
+## 🎯 Future Enhancements
+
+- [ ] More genre options
+- [ ] Custom genre creation
+- [ ] Export functionality
+- [ ] User accounts and cloud sync
+- [ ] Batch text processing
+- [ ] API rate limiting and caching
