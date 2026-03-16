@@ -30,7 +30,6 @@ import Loading from "./_components/Loading/Loading";
 import clsx from "clsx";
 import { History, FlaskConical, Clock, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 
 const GENRES: Array<string> = [
   "Military Operation Report",
@@ -57,6 +56,7 @@ export default function Home() {
   const [resultText, setResultText] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [history, setHistory] = useState<any[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const sessionId = crypto.randomUUID();
 
@@ -72,7 +72,12 @@ export default function Home() {
         }),
       });
       const data = await response.json();
+      if (!response.ok) {
+        setResultText(data.result);
+        return;
+      }
       setResultText(data.result);
+      await postHistory();
     } catch (error) {
       console.error("Conversion failed:", error);
     } finally {
@@ -91,7 +96,24 @@ export default function Home() {
     return sessionId;
   }
 
-  // console.log(history[0]["id"]);
+  const postHistory = async () => {
+    const sessionId = getSessionId();
+    const url = `/api/history?session_id=${sessionId}`;
+    try {
+      await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          original: originalText,
+          genre: selectedGenre,
+          model: selectedModel,
+          result: resultText,
+        }),
+      });
+    } catch (error) {
+      console.error("History save failed:", error);
+    }
+  };
 
   const getHistory = async () => {
     const sessionId = getSessionId();
@@ -100,7 +122,6 @@ export default function Home() {
       const response = await fetch(url);
       const data = await response.json();
       setHistory(data);
-      console.log("History data:", data);
     } catch (error) {
       console.error("History fetch failed:", error);
     }
@@ -121,26 +142,35 @@ export default function Home() {
               Same text, but in different Genre
             </p>
           </div>
-          <Drawer direction="right">
+          <Drawer direction="right" open={isOpen}>
             <DrawerTrigger asChild>
               <Button
                 variant="ghost"
                 className={clsx(
                   "h-9 px-4 bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white",
-                  "rounded-full transition-all flex items-center gap-2 shadow-lg group hover:text-white"
+                  "rounded-full transition-all flex items-center gap-2 shadow-lg group hover:text-white",
                 )}
-                onClick={getHistory}
+                onClick={() => {
+                  getHistory();
+                  setIsOpen(true);
+                }}
               >
                 <History className="text-white group-hover:rotate-[-10deg] transition-transform" />
                 <span className="font-medium">History</span>
               </Button>
             </DrawerTrigger>
             <DrawerContent className="">
+              {/* drawer 밖에 눌렀을 때 닫히는 거 추가하기 */}
               <DrawerHeader>
                 <div className="flex gap-1">
                   <History className="w-5 text-blue-800" />
                   <DrawerTitle className="">History</DrawerTitle>
-                  <DrawerClose className="flex  w-full justify-end">
+                  <DrawerClose
+                    className="flex  w-full justify-end"
+                    onClick={() => {
+                      setIsOpen(false);
+                    }}
+                  >
                     <X className="cursor-pointer w-5" />
                   </DrawerClose>
                 </div>
@@ -171,27 +201,45 @@ export default function Home() {
                   });
                 };
                 return (
-                  <div
+                  <Button
                     key={`history-${index}`}
-                    className="flexs flex-col p-3 gap-1.5 border ml-3 mr-3 mb-3 rounded-sm"
+                    variant="ghost"
+                    className={clsx(
+                      "flex flex-col items-start border mx-3 mb-3 rounded-sm",
+                      "h-auto text-left justify-start gap-1",
+                      "hover:cursor-pointer",
+                    )}
+                    onClick={() => {
+                      setOriginalText(item.original);
+                      setSelectedGenre(item.genre);
+                      setSelectedModel(item.model);
+                      setResultText(item.result);
+                      setIsOpen(false);
+                    }}
                   >
-                    <div className="flex items-center gap-2 justify-end">
-                      <Clock className="w-3 h-3 text-gray-500" />
-                      <p className="text-gray-500 text-sm">
+                    <div className="flex items-center gap-1 justify-end w-full">
+                      <Clock className="w-3! h-3! text-gray-500" />
+                      <p className="text-gray-500 text-xs">
                         {getRelativeTime(item.created_at)}
                       </p>
                     </div>
-                    <span className="rounded bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
-                      {item.genre}
-                    </span>
-                    <span className="ml-1 rounded bg-blue-400/20 px-2 py-0.5 text-xs font-medium text-primary">
-                      {item.model}
-                    </span>
-                    <p className="font-semibold text-gray-800">
-                      {item.original}
-                    </p>
-                    <p className="text-sm text-gray-500">{item.result}</p>
-                  </div>
+                    <div className="flex gap-1">
+                      <span className="rounded bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+                        {item.genre}
+                      </span>
+                      <span className="rounded bg-blue-400/20 px-2 py-0.5 text-xs font-medium text-primary">
+                        {item.model}
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-0 w-full text-left">
+                      <p className="font-semibold text-gray-800 text-base">
+                        {item.original}
+                      </p>
+                      <p className="text-sm text-gray-500 truncate">
+                        {item.result}
+                      </p>
+                    </div>
+                  </Button>
                 );
               })}
             </DrawerContent>
@@ -230,7 +278,7 @@ export default function Home() {
               </SelectContent>
             </Select>
           </section>
-          <div className="flex flex-1 min-h-0">
+          <div className="grid grid-cols-2 flex-1 min-h-0 w-full">
             {isLoading && <Loading loadingText={LOADING_TEXT[selectedGenre]} />}
             <TextPanel
               title="Original"
@@ -251,7 +299,7 @@ export default function Home() {
           <Button
             className={clsx(
               "w-25 bg-linear-to-r from-purple-600 to-blue-600 ",
-              "hover:opacity-80 transition-opacity"
+              "hover:opacity-80 transition-opacity",
             )}
             disabled={!originalText || !selectedGenre}
             onClick={convertText}

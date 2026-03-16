@@ -10,7 +10,7 @@ const TextPanel = ({
   onChange,
 }: TextPanelProps) => {
   return (
-    <section className={cn("flex flex-col flex-1 p-5 min-h-0")}>
+    <section className={cn("flex flex-col flex-1 p-5 min-h-0 min-w-0")}>
       <header className="flex justify-between items-center pb-3 px-2 shrink-0">
         <h2 className="text-xl font-semibold">{title}</h2>
       </header>

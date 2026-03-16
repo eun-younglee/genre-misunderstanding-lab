@@ -21,7 +21,7 @@ export async function POST(req: Request) {
             },
           ],
         }),
-      }
+      },
     );
 
     const data = await response.json();
@@ -39,5 +39,5 @@ export async function POST(req: Request) {
     // failure like network disconnected
     console.error("Exception during API calling:", error);
   }
-  return Response.json({ result: ERROR_MESSAGE[genre] });
+  return Response.json({ result: ERROR_MESSAGE[genre] }, { status: 500 });
 }
